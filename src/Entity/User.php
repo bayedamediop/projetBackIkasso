@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -47,9 +49,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "method"="GET",
  *                    "path" = "/user/{id}",
  *                     "normalization_context"={"groups"={"usersRead:read"}},
- *              }
+ *              },
+ *     "archive_user"={
+ *                  "route_name"="archiveUser",
+ *              },
  *              },
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"abonnement"})
+ * @ApiFilter(BooleanFilter::class, properties={"archivage"})
+
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -131,10 +139,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $articles;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Reservations::class, mappedBy="user")
+     */
+    private $reservations;
+
     public function __construct()
     {
         $this->agences = new ArrayCollection();
         $this->articles = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
 
@@ -382,6 +396,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($article->getUser() === $this) {
                 $article->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservations>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservations $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservations $reservation): self
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getUser() === $this) {
+                $reservation->setUser(null);
             }
         }
 

@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ArticlesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
@@ -13,7 +15,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 /**
  *
  * @ORM\Entity(repositoryClass=ArticlesRepository::class)
- *  @ApiResource(  collectionOperations={
+ *  @ApiResource(
+ *     collectionOperations={
  *     "get_articles"={
  *                  "method"="GET",
  *                    "path" = "/admin/articles",
@@ -51,13 +54,13 @@ class Articles
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"articlesRead:read"})
+     * @Groups ({"articlesRead:read","getReservationdunUser"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups ({"articlesRead:read"})
+     * @Groups ({"articlesRead:read","getReservationdunUser"})
      */
     private $adresseArticle;
 
@@ -99,6 +102,17 @@ class Articles
      * @ORM\Column(type="boolean")
      */
     private $archivage = true;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Reservations::class, mappedBy="article")
+     *
+     */
+    private $reservations;
+
+    public function __construct()
+    {
+        $this->reservations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -236,6 +250,36 @@ class Articles
     public function setArchivage(bool $archivage): self
     {
         $this->archivage = $archivage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservations>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservations $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservations $reservation): self
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getArticle() === $this) {
+                $reservation->setArticle(null);
+            }
+        }
 
         return $this;
     }

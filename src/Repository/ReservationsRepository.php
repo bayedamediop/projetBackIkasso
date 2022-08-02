@@ -2,30 +2,30 @@
 
 namespace App\Repository;
 
-use App\Entity\Articles;
+use App\Entity\Reservations;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Articles|null find($id, $lockMode = null, $lockVersion = null)
- * @method Articles|null findOneBy(array $criteria, array $orderBy = null)
- * @method Articles[]    findAll()
- * @method Articles[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Reservations|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Reservations|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Reservations[]    findAll()
+ * @method Reservations[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ArticlesRepository extends ServiceEntityRepository
+class ReservationsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Articles::class);
+        parent::__construct($registry, Reservations::class);
     }
 
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(Articles $entity, bool $flush = true): void
+    public function add(Reservations $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
         if ($flush) {
@@ -37,7 +37,7 @@ class ArticlesRepository extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function remove(Articles $entity, bool $flush = true): void
+    public function remove(Reservations $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
@@ -46,15 +46,15 @@ class ArticlesRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return Articles[] Returns an array of Articles objects
+    //  * @return Reservations[] Returns an array of Reservations objects
     //  */
     /*
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
+            ->orderBy('r.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -63,21 +63,18 @@ class ArticlesRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Articles
+    public function findOneBySomeField($value): ?Reservations
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
     */
-    // /**
-    //  * @return liste des reservation d' un article[]
-    //  */
 
-    public function ifUserInArticle($id)
+    public function ifUserInReservation($id)
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.user = :val')
