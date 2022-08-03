@@ -86,6 +86,11 @@ class Reservations
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateFin;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -159,6 +164,18 @@ class Reservations
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTimeInterface
+    {
+        return $this->dateFin;
+    }
+
+    public function setDateFin(?\DateTimeInterface $dateFin): self
+    {
+        $this->dateFin = $dateFin;
 
         return $this;
     }

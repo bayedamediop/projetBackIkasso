@@ -71,13 +71,13 @@ class Articles
     private $image;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="blob", nullable="true" )
      * @Groups ({"articlesRead:read"})
      */
     private $image3D;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="string", length=255, nullable="true")
      * @Groups ({"articlesRead:read"})
      */
     private $video;
@@ -108,6 +108,11 @@ class Articles
      *
      */
     private $reservations;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lien;
 
     public function __construct()
     {
@@ -280,6 +285,18 @@ class Articles
                 $reservation->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLien(): ?string
+    {
+        return $this->lien;
+    }
+
+    public function setLien(?string $lien): self
+    {
+        $this->lien = $lien;
 
         return $this;
     }
